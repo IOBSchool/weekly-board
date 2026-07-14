@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Weekly Task Board</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main class="container">
+  <header class="head">
+    <h1>🌿 Weekly Task Board</h1>
+    <p class="sub" id="weekLabel">読み込み中...</p>
+    <button id="reloadBtn" class="btn-ghost" type="button">🔄 最新に更新</button>
+  </header>
+
+  <nav class="manual-bar" aria-label="マニュアル">
+    <span class="manual-label">📘 手順書</span>
+    <a href="manuals/dashboard.html" target="_blank" rel="noopener">ダッシュボードの使い方</a>
+    <a href="manuals/meta-business.html" target="_blank" rel="noopener">Meta Business（カルーセル予約）</a>
+    <a href="manuals/flodesk.html" target="_blank" rel="noopener">Flodesk（メルマガ予約）</a>
+  </nav>
+
+  <section class="progress-wrap">
+    <div class="progress-text" id="progressText">0 / 0 完了（0%）</div>
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+  </section>
+
+  <section class="batch" id="batchTue" hidden>
+    <h2>📤 火曜の作業：<span id="tueDate"></span> <span class="count" id="countTue"></span></h2>
+    <p class="batch-note">下記タスクを順に対応してください。</p>
+    <div class="cards" id="cardsTue"></div>
+  </section>
+
+  <section class="batch" id="batchCarousel" hidden>
+    <h2>📷 Metaカルーセル予約 <span class="batch-theme">Instagram予約投稿（朝6:00 JST／平日のみ）</span> <span class="count" id="countCarousel"></span></h2>
+    <p class="batch-note">Meta Business Suiteから、各カルーセルを「📅予約日時」にセットして予約投稿します。最終ページに必ず<a href="https://drive.google.com/drive/folders/1nmox_E8xl85qJ2XZ9IUjKljY-9TbOcFv" target="_blank" rel="noopener">📁 共通CTA</a>を追加。<a href="https://docs.google.com/document/d/1H8rCPkJXOXtBJvv2Eh6ZdHAmcsFP2q21BINLnGHMwQE" target="_blank" rel="noopener">📝 共通キャプション</a>を貼り付け。</p>
+    <div class="cards" id="cardsCarousel"></div>
+  </section>
+
+  <section class="batch" id="batchFri" hidden>
+    <h2>📤 金曜の作業：<span id="friDate"></span> <span class="count" id="countFri"></span></h2>
+    <p class="batch-note">下記タスクを順に対応してください。</p>
+    <div class="cards" id="cardsFri"></div>
+  </section>
+
+  <section class="done-wrap">
+    <button id="doneAllBtn" class="btn-primary" type="button">✅ 全件完了を報告</button>
+    <p class="done-msg" id="doneMsg" hidden>おつかれさまでした！📧 完了報告メールの下書きが開きます。内容を確認して「送信」を押してください 🌱（メーラーが開かない場合はお知らせください）</p>
+  </section>
+
+  <footer class="foot">
+    <small>固有名詞を含めない運用です。URLを第三者に共有しないでください。</small>
+  </footer>
+</main>
+
+<script src="config.js"></script>
+<script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Meta Business Suite カルーセル予約手順</title>
+<link rel="stylesheet" href="manual.css">
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html">← ダッシュボードに戻る</a>
+  <h1>📷 Meta Business Suite でカルーセル予約</h1>
+  <p class="lead">Instagramのカルーセル投稿（複数枚画像）を予約する手順です。ログインから予約完了まで、順番通りにやれば10分ほどで1件完了します。</p>
+
+  <div class="video-box">
+    <h2>🎥 まずこの動画（5〜7分）を見てください</h2>
+    <p>ログインから予約確定までの一連の流れを実演しています。</p>
+    <div class="video-embed" id="videoEmbed"></div>
+  </div>
+  <script src="videos.js"></script>
+  <script>
+    (function(){
+      const id = (window.VIDEOS && window.VIDEOS.meta) || "";
+      const el = document.getElementById("videoEmbed");
+      if (id && id !== "VIDEO_ID_HERE") {
+        el.innerHTML = `<iframe src="https://www.youtube.com/embed/${id}" title="Meta予約動画" allowfullscreen></iframe>`;
+      } else {
+        el.innerHTML = `<div class="video-placeholder">動画は準備中です。<br>準備ができるまでは、下の手順を読みながら進めてください。</div>`;
+      }
+    })();
+  </script>
+
+  <div class="toc">
+    <strong>目次</strong>
+    <ol>
+      <li><a href="#login">Meta Business Suite にログイン</a></li>
+      <li><a href="#open">投稿画面を開く</a></li>
+      <li><a href="#media">カルーセル画像をアップロード</a></li>
+      <li><a href="#caption">キャプションを貼り付け</a></li>
+      <li><a href="#schedule">予約日時を設定</a></li>
+      <li><a href="#confirm">予約を確定</a></li>
+      <li><a href="#trouble">困ったとき</a></li>
+    </ol>
+  </div>
+
+  <h2 id="login">1. Meta Business Suite にログイン</h2>
+  <div class="step"><span class="step-num">1</span><strong>佳代子さんご自身のFacebookアカウントでログイン</strong>
+    <p>下のURLを開いて、<strong>佳代子さん本人のFacebookアカウント</strong>でログインしてください。</p>
+    <p><a href="https://business.facebook.com/" target="_blank" rel="noopener">https://business.facebook.com/</a></p>
+    <div class="warn">⚠️ 担当者のログイン情報を使う必要はありません。佳代子さん本人のFBアカウントに、<code>@natsuko_bio</code> の管理者権限が付与されています。</div>
+  </div>
+  <div class="step"><span class="step-num">2</span><strong>アカウントを <code>@natsuko_bio</code>（IOB）に切り替え</strong>
+    <p>ログイン後、画面左上のアカウント名やプロフィールアイコンをクリックすると、アクセスできるアカウント一覧が出ます。<br>
+    その中から「<strong>IOB - Institut für Organic Business GmbH</strong>」または「<strong>natsuko_bio</strong>」を選択してください。</p>
+    <p>切り替わったら、画面上部に該当アカウント名が表示されます。これで投稿先がInstagram <code>@natsuko_bio</code> になった状態です。</p>
+  </div>
+  <div class="tip">💡 2回目以降はログイン状態とアカウント選択が保持されます。毎回ログインし直す必要はありません。</div>
+  <div class="tip">🔑 もし招待がまだ承認できていなかったり、<code>@natsuko_bio</code> がアカウント一覧に出てこない場合は、Chatworkで担当者に連絡してください。</div>
+
+  <h2 id="open">2. 投稿画面を開く</h2>
+  <div class="step"><span class="step-num">1</span><strong>左サイドメニューから「コンテンツ」を選ぶ</strong>
+    <p>画面左側の縦長メニューの中にあります。鉛筆アイコンが目印。</p>
+  </div>
+  <div class="step"><span class="step-num">2</span><strong>右上の「投稿を作成」ボタンをクリック</strong>
+    <p>緑色または青色のボタンです。押すと投稿作成パネルが開きます。</p>
+  </div>
+  <div class="step"><span class="step-num">3</span><strong>投稿先をInstagramに設定</strong>
+    <p>上部に「Facebook」「Instagram」のチェックボックスがあります。
+    <strong>Instagramだけ</strong>にチェック（Facebookにも出す場合は特記事項を確認してから）。</p>
+  </div>
+
+  <h2 id="media">3. カルーセル画像をアップロード</h2>
+  <div class="step"><span class="step-num">1</span><strong>ダッシュボードのカードから「📁 FINAL素材」を開く</strong>
+    <p>該当カルーセルのDriveフォルダが開きます。フォルダの中にある <strong>FINAL/</strong> サブフォルダを開いてください。</p>
+    <div class="warn">⚠️ <code>_archive/</code> や他のサブフォルダは古い版です。<strong>FINAL/ の中身だけ</strong>を使ってください。</div>
+  </div>
+  <div class="step"><span class="step-num">2</span><strong>FINAL/ 内の画像をすべてダウンロード</strong>
+    <p>画像は <code>01.jpg, 02.jpg, 03.jpg...</code> のように番号順に並んでいます。全選択（<span class="kbd">⌘</span> + <span class="kbd">A</span>）してダウンロード。</p>
+  </div>
+  <div class="step"><span class="step-num">3</span><strong>カードから「🎯 共通CTA」を開いて、共通CTA画像もダウンロード</strong>
+    <p>すべてのカルーセルの<strong>最後のスライド</strong>として必ず追加するページです。</p>
+  </div>
+  <div class="step"><span class="step-num">4</span><strong>Meta Business Suite で「写真・動画を追加」をクリック</strong>
+    <p>本体カルーセル画像を <code>01 → 02 → 03 ...</code> の順番でアップロード。<br>
+    <strong>その後、最後に共通CTA画像を追加</strong>してください。</p>
+    <p>例：本体が7枚なら、最後に共通CTAを足して計8枚で投稿。</p>
+  </div>
+  <div class="step"><span class="step-num">5</span><strong>アップロード後、画像の順番を確認</strong>
+    <p>番号が小さい順（01→07）に左から並び、<strong>一番最後が共通CTA</strong>になっていることを確認します。
+    違う順で並んでしまった時は、ドラッグ&ドロップで並べ替えできます。</p>
+    <div class="warn">⚠️ 順番が違うと投稿の流れが崩れます。必ず <code>01 → 02 → 03... → 共通CTA</code> の順にしてください。</div>
+  </div>
+
+  <h2 id="caption">4. キャプションを貼り付け</h2>
+  <div class="step"><span class="step-num">1</span><strong>ダッシュボードのカルーセルセクション説明にある「📝 共通キャプション」リンクを開く</strong>
+    <p>Googleドキュメントが開きます。<br>
+    全カルーセル共通のキャプションです（個別キャプションが必要な回がある場合は、その都度カードの特記事項でお知らせします）。</p>
+  </div>
+  <div class="step"><span class="step-num">2</span><strong>本文をすべてコピー</strong>
+    <p><span class="kbd">⌘</span> + <span class="kbd">A</span>（全選択） → <span class="kbd">⌘</span> + <span class="kbd">C</span>（コピー）。</p>
+  </div>
+  <div class="step"><span class="step-num">3</span><strong>Meta Business Suite のキャプション欄に貼り付け</strong>
+    <p>「キャプションを入力」と書かれているエリアをクリック → <span class="kbd">⌘</span> + <span class="kbd">V</span>。</p>
+  </div>
+  <div class="tip">💡 ハッシュタグは共通キャプションにすでに含まれています。追加で何か書く必要はありません。</div>
+
+  <h2 id="schedule">5. 予約日時を設定</h2>
+  <div class="step"><span class="step-num">1</span><strong>画面下部の「予約投稿」タブを選ぶ</strong>
+    <p>「今すぐ投稿」ではなく、必ず<strong>「予約投稿」</strong>を選んでください。</p>
+  </div>
+  <div class="step"><span class="step-num">2</span><strong>ダッシュボードのカードに表示の「📅 予約日時」を入力</strong>
+    <p>カードに書かれている <strong>「📅 予約日時：YYYY/M/D 6:00 JST (曜)」</strong> をそのまま入力してください。<br>
+    投稿時刻は<strong>朝6:00 JST固定</strong>、平日のみです。</p>
+    <div class="warn">⚠️ タイムゾーンに注意。「日本時間（JST）」になっているか確認してください。</div>
+  </div>
+  <div class="step"><span class="step-num">3</span><strong>日付・時刻を確認</strong>
+    <p>指定した日時が画面に表示されているか、目で再確認します。</p>
+  </div>
+
+  <h2 id="confirm">6. 予約を確定</h2>
+  <div class="step"><span class="step-num">1</span><strong>右下の「予約」ボタンをクリック</strong>
+    <p>緑色のボタンです。</p>
+  </div>
+  <div class="step"><span class="step-num">2</span><strong>完了画面を確認</strong>
+    <p>「投稿が予約されました」のメッセージが出たら成功。</p>
+  </div>
+  <div class="step"><span class="step-num">3</span><strong>ダッシュボードに戻ってチェックを付ける</strong>
+    <p>カードのチェックボックスをオンにして、次のカードへ。</p>
+  </div>
+
+  <h2 id="trouble">7. 困ったとき</h2>
+
+  <h3>Q. 画像のアップロードがエラーになる</h3>
+  <p>画像のファイルサイズが大きすぎる可能性があります。一度ページを更新してやり直してみてください。それでもダメならChatworkで連絡。</p>
+
+  <h3>Q. 予約ボタンが押せない（グレーのまま）</h3>
+  <p>以下をチェック：</p>
+  <ul>
+    <li>画像が1枚以上アップロードされているか</li>
+    <li>キャプションが入力されているか</li>
+    <li>投稿先（Instagram）がチェックされているか</li>
+    <li>予約日時が未来になっているか</li>
+  </ul>
+
+  <h3>Q. 予約した後、間違いに気づいた</h3>
+  <p>落ち着いて大丈夫です。「コンテンツ」→「予約済み」から該当投稿を開き、編集またはキャンセルできます。</p>
+
+  <h3>Q. カルーセルが1枚だけの投稿になってしまった</h3>
+  <p>画像追加ボタンをもう一度押して追加できます。すでに予約済みの場合は、キャンセルして作り直します。</p>
+
+  <hr>
+  <div class="checklist">
+    <strong>✔️ 予約確定前の最終チェック</strong>
+    <ul>
+      <li>アカウントが <code>@natsuko_bio</code>（IOB）に切り替わっている</li>
+      <li>Instagramにチェックが入っている</li>
+      <li>画像は FINAL/ のものだけ使い、<code>01→02→03... → 共通CTA</code> の順で並んでいる</li>
+      <li>共通キャプションが貼り付けられている</li>
+      <li>予約日時が正しい（朝6:00 JST・未来の平日）</li>
+      <li>特記事項の指示に従った（個別キャプションがある場合など）</li>
+    </ul>
+  </div>
+</div>
+</body>
+</html>

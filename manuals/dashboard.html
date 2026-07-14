@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>ダッシュボードの使い方</title>
+<link rel="stylesheet" href="manual.css">
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../index.html">← ダッシュボードに戻る</a>
+  <h1>📘 ダッシュボードの使い方</h1>
+  <p class="lead">この画面を見ながら作業するだけで、今週やることが全部わかります。所要時間の目安は1回1時間・週2回です。</p>
+
+  <div class="video-box">
+    <h2>🎥 まずこの動画（3〜4分）を見てください</h2>
+    <p>ダッシュボードの全体像と基本操作を動画でご案内します。</p>
+    <div class="video-embed" id="videoEmbed"></div>
+  </div>
+  <script src="videos.js"></script>
+  <script>
+    (function(){
+      const id = (window.VIDEOS && window.VIDEOS.dashboard) || "";
+      const el = document.getElementById("videoEmbed");
+      if (id && id !== "VIDEO_ID_HERE") {
+        el.innerHTML = `<iframe src="https://www.youtube.com/embed/${id}" title="使い方動画" allowfullscreen></iframe>`;
+      } else {
+        el.innerHTML = `<div class="video-placeholder">動画は準備中です。<br>準備ができるまでは、下の手順を読みながら進めてください。</div>`;
+      }
+    })();
+  </script>
+
+  <div class="toc">
+    <strong>目次</strong>
+    <ol>
+      <li><a href="#what">このダッシュボードでできること</a></li>
+      <li><a href="#flow">作業の流れ（火曜・金曜）</a></li>
+      <li><a href="#card">投稿カードの見方</a></li>
+      <li><a href="#check">チェックのつけ方と進捗バー</a></li>
+      <li><a href="#done">全部終わったら</a></li>
+      <li><a href="#trouble">困ったとき・よくある質問</a></li>
+    </ol>
+  </div>
+
+  <h2 id="what">1. このダッシュボードでできること</h2>
+  <p>週2回（火曜・金曜）の予約投稿作業で、「今週やること」を一覧で見ることができます。</p>
+  <ul>
+    <li>今週の予約投稿が全部リストで出る</li>
+    <li>1件ずつ、投稿文・画像/動画・予約ツールのリンクがボタンでまとまっている</li>
+    <li>終わったものにチェックをつけると、進み具合がバーで見える</li>
+    <li>チェックは自動保存されるので、途中で閉じてもOK</li>
+  </ul>
+  <div class="tip">📌 判断が必要なことはすべて担当者が事前に書いてあります。佳代子さんは「書いてある通りに予約する」だけで大丈夫です。</div>
+
+  <h2 id="flow">2. 作業の流れ（火曜・金曜）</h2>
+
+  <div class="step"><span class="step-num">1</span><strong>ダッシュボードを開く</strong>
+    <p>ブックマークからダッシュボードのページを開きます。一番上に「今週の予約投稿」が出ます。</p>
+  </div>
+  <div class="step"><span class="step-num">2</span><strong>今日のバッチを確認</strong>
+    <p>火曜日なら「火曜バッチ」、金曜日なら「金曜バッチ」を見てください。件数と所要時間の目安が表示されます。</p>
+  </div>
+  <div class="step"><span class="step-num">3</span><strong>上のカードから1件ずつ予約</strong>
+    <p>投稿文をコピー → 素材をダウンロード → 予約ツールに貼り付けて予約、の流れを1件ずつ。詳しくは次の章で。</p>
+  </div>
+  <div class="step"><span class="step-num">4</span><strong>終わったらチェック</strong>
+    <p>予約が完了したら、カードのチェックボックスをオン。進捗バーが進みます。</p>
+  </div>
+  <div class="step"><span class="step-num">5</span><strong>全部終わったら「全件完了を報告」</strong>
+    <p>ページ下部の緑ボタンを押して終了です。</p>
+  </div>
+
+  <h2 id="card">3. 投稿カードの見方</h2>
+  <p>1つの投稿が1枚の「カード」になっています。見るところはこの5つ：</p>
+  <ul>
+    <li>☑️ <strong>チェックボックス</strong>：作業完了時にオン</li>
+    <li>🏷️ <strong>媒体</strong>：どこに投稿するか（Instagram / Flodesk など）</li>
+    <li>📅 <strong>投稿日時</strong>：いつ配信/公開するか</li>
+    <li>🔘 <strong>3つのボタン</strong>：
+      <ul>
+        <li>📄 <strong>投稿文</strong>：本文が書かれたGoogleドキュメント</li>
+        <li>📁 <strong>素材</strong>：画像や動画が入ったフォルダ（カルーセルは複数枚）</li>
+        <li>🔗 <strong>予約ツール</strong>：Meta Business Suite / Flodesk など</li>
+      </ul>
+    </li>
+    <li>💡 <strong>特記事項</strong>：オレンジ色の枠。ある場合は必ず読む</li>
+  </ul>
+
+  <div class="warn">⚠️ 特記事項に「カルーセル。画像は01→10の順」「Facebookにも同時予約」などの指示が入ることがあります。作業前に必ず目を通してください。</div>
+
+  <h2 id="check">4. チェックのつけ方と進捗バー</h2>
+  <ol>
+    <li>1件の予約が完了したら、カードの左上にあるチェックボックスを1回クリック</li>
+    <li>カードが少し薄くなり、進捗バーが右に進みます</li>
+    <li>このチェックはブラウザに自動保存されます。途中で閉じても、次に開いたときそのまま続きから</li>
+    <li>週が変わると自動でリセットされます</li>
+  </ol>
+  <div class="tip">💡 間違えてチェックした時は、もう一度クリックすれば外れます。</div>
+
+  <h2 id="done">5. 全部終わったら</h2>
+  <ol>
+    <li>ページ一番下の緑ボタン「✅ 全件完了を報告」をクリック</li>
+    <li>「おつかれさまでした」のメッセージが出たら完了です</li>
+    <li>ブラウザを閉じてOK</li>
+  </ol>
+
+  <h2 id="trouble">6. 困ったとき・よくある質問</h2>
+
+  <h3>Q. 投稿文のリンクを押しても開けない</h3>
+  <p>共有設定が原因の可能性があります。担当者にChatworkで連絡してください。無理に開かずに一度止めてOKです。</p>
+
+  <h3>Q. 予約ツールのログインを求められた</h3>
+  <p>初回だけログインが必要です。Meta Business Suiteは別紙「<a href="meta-business.html">Meta Business（カルーセル予約）</a>」、Flodeskは「<a href="flodesk.html">Flodesk（メルマガ予約）</a>」を見てください。</p>
+
+  <h3>Q. 特記事項に書いてある意味がわからない</h3>
+  <p>わからないまま進めずに、一度Chatworkで質問してください。完璧より完了、でも迷ったら止める、が基本です。</p>
+
+  <h3>Q. 今週分が表示されない</h3>
+  <p>「🔄 最新に更新」ボタンを押してください。それでも出ない場合は担当者に連絡。</p>
+
+  <h3>Q. 途中で間違えて予約してしまった</h3>
+  <p>Meta Business Suiteもflodeskも、予約した投稿は配信前ならキャンセル・編集できます。慌てずに一度止めて連絡してください。</p>
+
+  <hr>
+  <p class="screenshot-note">このマニュアルは随時アップデートされます。不明点はいつでもChatworkで聞いてください 🌿</p>
+</div>
+</body>
+</html>

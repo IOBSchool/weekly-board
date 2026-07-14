@@ -10,7 +10,7 @@ window.DASHBOARD_CONFIG = {
   // 共有進捗バックエンド（Google Apps Script Web App）
   // 未設定（空文字）の場合は従来通りlocalStorageのみで動作
   // セットアップ手順は SETUP_SHARED_PROGRESS.md を参照
-  progressApiUrl: "",
+  progressApiUrl: "https://script.google.com/macros/s/AKfycbwlnCw9XVAruOnw8XoXAW-A2WNxHKLimKooCscFZdGQhiDocaZMsJSu6qekvu3QapPceg/exec",
 
   // チェック操作者の識別（URLに ?who=kayoko / ?who=natsuko を付ければ上書き）
   defaultWho: "kayoko",

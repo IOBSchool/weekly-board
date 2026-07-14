@@ -328,9 +328,6 @@
     doneAllBtn.addEventListener("click", () => {
       document.getElementById("doneMsg").hidden = false;
 
-      // 完了報告メールを起動（mailto）
-      const to = cfg.reportEmail;
-      if (!to) return;
       const done = THIS_WEEK_POSTS.filter(p => {
         const key = p["投稿番号"] + "-" + p["バッチ"];
         return getCheckMeta(key);
@@ -355,8 +352,18 @@
       }
       lines.push(``, `― 佳代子`);
       const body = lines.join('\n');
-      const href = `mailto:${encodeURIComponent(to)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-      window.location.href = href;
+
+      // 共有バックエンド(GAS)経由でサーバ送信。宛先メールは非公開GAS内のみ（公開ファイルに出さない）
+      if (cfg.progressApiUrl) {
+        fetch(cfg.progressApiUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({ action: 'report', subject: subject, text: body, who: WHO })
+        }).catch(e => console.warn('report failed', e));
+      } else if (cfg.reportEmail) {
+        const href = `mailto:${encodeURIComponent(cfg.reportEmail)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+        window.location.href = href;
+      }
     });
   }
 

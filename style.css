@@ -51,8 +51,10 @@ html, body {
 .card {
   background: var(--card); border: 1px solid var(--line); border-radius: 12px;
   padding: 14px; display: grid; gap: 10px;
+  transition: opacity 0.3s ease, transform 0.3s ease;
 }
 .card.done { opacity: 0.6; background: #efece3; }
+.card.fading-out { opacity: 0; transform: scale(0.97); }
 .done-badge {
   display: inline-block;
   background: var(--accent);

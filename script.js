@@ -201,17 +201,20 @@
   function escapeAttr(s) { return escapeHTML(s); }
 
   let THIS_WEEK_POSTS = [];
+  let THIS_WEEK_PENDING = { tue: [], fri: [], carousel: [] };
   function render(posts) {
     const thisWeek = posts.filter(p => p["週識別子"] === currentWeek);
     THIS_WEEK_POSTS = thisWeek;
-    const tue = thisWeek.filter(p => p["バッチ"] === "火曜");
-    const fri = thisWeek.filter(p => p["バッチ"] === "金曜");
-    const carousel = thisWeek.filter(p => p["バッチ"] === "カルーセル");
+    // 完了済みはボードから消す（記録はGoogle Sheets側の進捗シートに残る）
+    const pending = thisWeek.filter(p => !getCheckMeta(p["投稿番号"] + "-" + p["バッチ"]));
+    const tue = pending.filter(p => p["バッチ"] === "火曜");
+    const fri = pending.filter(p => p["バッチ"] === "金曜");
+    const carousel = pending.filter(p => p["バッチ"] === "カルーセル");
 
     const mins = cfg.minutesPerPost || 5;
     const roleLabel = ROLE === 'viewer' ? '（閲覧モード）' : '';
     document.getElementById("weekLabel").textContent =
-      `今週（${weekRange}）の予約投稿 / 全${thisWeek.length}件・所要時間目安 約${thisWeek.length * mins}分 ${roleLabel}`;
+      `今週（${weekRange}）の予約投稿 / 残り${pending.length}件（全${thisWeek.length}件）・所要時間目安 約${pending.length * mins}分 ${roleLabel}`;
 
     // 火曜・金曜の作業日を動的に表示
     const today = new Date();
@@ -239,6 +242,7 @@
     toggleSection("batchCarousel", carousel.length > 0);
 
     updateProgress(thisWeek);
+    THIS_WEEK_PENDING = { tue, fri, carousel };
 
     // チェックイベント
     document.querySelectorAll(".card").forEach(card => {
@@ -261,21 +265,36 @@
         } else {
           delete CHECKS[key];
         }
-        // バッジを差し替え
-        card.classList.toggle("done", done);
-        const oldBadge = card.querySelector('.done-badge');
-        if (oldBadge) oldBadge.remove();
         if (done) {
-          const meta = getCheckMeta(key);
-          const t = meta && meta.at ? fmtDateTime(meta.at) : '';
-          const by = meta && meta.by ? escapeHTML(meta.by) : '';
-          const parts = ['✅ 完了'];
-          if (t) parts.push(t);
-          if (by) parts.push(by);
-          const span = document.createElement('span');
-          span.className = 'done-badge';
-          span.innerHTML = parts.join(' / ');
-          card.querySelector('.card-top').appendChild(span);
+          // 完了したらフェードアウトしてボードから消す（記録はGoogle Sheetsの進捗シートに残る）
+          card.classList.add("done", "fading-out");
+          setTimeout(() => {
+            const batchKey = batch === "火曜" ? "tue" : batch === "金曜" ? "fri" : "carousel";
+            const list = THIS_WEEK_PENDING[batchKey];
+            const idx = list.findIndex(p => (p["投稿番号"] + "-" + p["バッチ"]) === key);
+            if (idx !== -1) list.splice(idx, 1);
+            card.remove();
+            const cardsIdMap = { tue: "cardsTue", fri: "cardsFri", carousel: "cardsCarousel" };
+            const countIdMap = { tue: "countTue", fri: "countFri", carousel: "countCarousel" };
+            const sectionIdMap = { tue: "batchTue", fri: "batchFri", carousel: "batchCarousel" };
+            const mins = cfg.minutesPerPost || 5;
+            const countEl = document.getElementById(countIdMap[batchKey]);
+            if (countEl) countEl.textContent = list.length ? `${list.length}件・約${list.length * mins}分` : "";
+            if (!list.length) {
+              const cardsEl = document.getElementById(cardsIdMap[batchKey]);
+              if (cardsEl) cardsEl.innerHTML = `<div class="empty">✅ 今週分は完了しました</div>`;
+              const sectionEl = document.getElementById(sectionIdMap[batchKey]);
+              if (sectionEl) sectionEl.hidden = true;
+            }
+            const pendingTotal = THIS_WEEK_PENDING.tue.length + THIS_WEEK_PENDING.fri.length + THIS_WEEK_PENDING.carousel.length;
+            const weekLabelEl = document.getElementById("weekLabel");
+            if (weekLabelEl) {
+              const roleLabel = ROLE === 'viewer' ? '（閲覧モード）' : '';
+              weekLabelEl.textContent = `今週（${weekRange}）の予約投稿 / 残り${pendingTotal}件（全${thisWeek.length}件）・所要時間目安 約${pendingTotal * mins}分 ${roleLabel}`;
+            }
+          }, 350);
+        } else {
+          card.classList.remove("done");
         }
         updateProgress(thisWeek);
       });

@@ -79,6 +79,7 @@ html, body {
 }
 .links a:hover { background: #e2d9c3; }
 .note { font-size: 13px; color: var(--warn); background: #fdf5ee; padding: 6px 10px; border-radius: 8px; }
+.step-title { font-weight: 700; font-size: 15px; color: var(--ink); margin: 2px 0 4px; }
 
 .done-wrap { text-align: center; margin-top: 30px; }
 .btn-primary {

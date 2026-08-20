@@ -171,6 +171,7 @@
     }
     if (p["予約ツールURL"]) links.push(`<a href="${p["予約ツールURL"]}" target="_blank" rel="noopener">🔗 予約ツール</a>`);
     const note = p["特記事項"] ? `<div class="note">💡 ${escapeHTML(p["特記事項"])}</div>` : "";
+    const stepTitle = p["ステップ"] ? `<div class="step-title">${escapeHTML(p["ステップ"])}</div>` : "";
     const checked = !!(meta && meta.done);
     let badge = '';
     if (checked) {
@@ -191,6 +192,7 @@
           <span class="when">📅 予約日時：${escapeHTML(when)}</span>
           ${badge}
         </div>
+        ${stepTitle}
         <div class="links">${links.join("")}</div>
         ${note}
       </div>

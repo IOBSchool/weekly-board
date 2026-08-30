@@ -53,8 +53,22 @@
       });
   }
 
+  // ===== プレビュー用: ?week=2026-W36 で任意の週を表示確認できる =====
+  function isoWeekStartDate(weekStr) {
+    const [yStr, wStr] = weekStr.split("-W");
+    const y = parseInt(yStr, 10), w = parseInt(wStr, 10);
+    const jan4 = new Date(y, 0, 4);
+    const jan4Day = jan4.getDay() || 7;
+    const week1Monday = new Date(jan4);
+    week1Monday.setDate(jan4.getDate() - jan4Day + 1);
+    const monday = new Date(week1Monday);
+    monday.setDate(week1Monday.getDate() + (w - 1) * 7);
+    return monday;
+  }
+
   // ===== localStorage（フォールバック/キャッシュ） =====
-  const currentWeek = getISOWeek(new Date());
+  const weekOverride = getParam('week');
+  const currentWeek = weekOverride || getISOWeek(new Date());
 
   function getWeekRange(date) {
     const d = new Date(date);
@@ -64,7 +78,7 @@
     const fmt = (x) => `${x.getMonth() + 1}/${x.getDate()}`;
     return `${fmt(mon)}〜${fmt(sun)}`;
   }
-  const weekRange = getWeekRange(new Date());
+  const weekRange = getWeekRange(weekOverride ? isoWeekStartDate(weekOverride) : new Date());
   const storageKey = "weekly-board:" + currentWeek;
   function loadLocalChecks() {
     try { return JSON.parse(localStorage.getItem(storageKey) || "{}"); }

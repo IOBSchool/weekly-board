@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>カルーセル予約カレンダー</title>
+<style>
+  :root{
+    --bg:#f6f3ec; --card:#ffffff; --card-2:#faf8f1;
+    --ink:#3a3a33; --muted:#7a7a6d; --faint:#a6a294;
+    --accent:#6b8e5a; --accent-dark:#4f6f43; --accent-soft:#e9efe1;
+    --line:#e3dfd3; --line-strong:#d5d0c0; --warn:#c97a4a; --tip:#f0ead8;
+    --s-plan-bg:#eeeae0;   --s-plan-ink:#7a7268;   --s-plan-bar:#b7ae9d;
+    --s-booked-bg:#dde9f2;  --s-booked-ink:#2f6088; --s-booked-bar:#4f89bd;
+    --s-done-bg:#e3ecda;    --s-done-ink:#42663a;   --s-done-bar:#6b8e5a;
+    --shadow:0 1px 2px rgba(58,58,51,.05), 0 6px 20px rgba(58,58,51,.06);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Noto Sans JP",sans-serif;line-height:1.6}
+  .container{max-width:1080px;margin:0 auto;padding:20px 16px 60px}
+
+  .head{text-align:center;margin-bottom:18px}
+  .head h1{margin:0 0 4px;font-size:24px}
+  .head .sub{color:var(--muted);margin:0 auto;max-width:60ch;font-size:14px}
+  .backlink{display:inline-block;margin-bottom:14px;font-size:14px;color:var(--ink);text-decoration:none;border-bottom:1px dotted var(--accent);padding-bottom:1px}
+  .backlink:hover{color:var(--accent-dark)}
+
+  .controls{display:flex;flex-wrap:wrap;gap:12px 20px;align-items:flex-end;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin-bottom:16px;box-shadow:var(--shadow)}
+  .field{display:flex;flex-direction:column;gap:4px}
+  .field label{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--faint);font-weight:700}
+  .field input{font:inherit;font-size:14px;padding:7px 10px;border:1px solid var(--line-strong);border-radius:9px;background:var(--card-2);color:var(--ink)}
+  .field .hint{font-size:11px;color:var(--faint);max-width:24ch}
+  .cyclebadge{margin-left:auto;font-size:13px;color:var(--accent-dark);background:var(--accent-soft);border:1px solid var(--line);border-radius:999px;padding:8px 14px;font-weight:600}
+
+  .legend{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;margin:2px 2px 20px}
+  .legend .lbl{font-size:12px;letter-spacing:.08em;color:var(--faint);text-transform:uppercase;font-weight:700}
+  .chip-key{display:inline-flex;align-items:center;gap:7px;font-size:13px;font-weight:600;color:var(--muted)}
+  .swatch{width:14px;height:14px;border-radius:4px}
+  .sw-plan{background:var(--s-plan-bg);box-shadow:inset 3px 0 0 var(--s-plan-bar)}
+  .sw-booked{background:var(--s-booked-bg);box-shadow:inset 3px 0 0 var(--s-booked-bar)}
+  .sw-done{background:var(--s-done-bg);box-shadow:inset 3px 0 0 var(--s-done-bar)}
+
+  .months{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+  @media(max-width:820px){.months{grid-template-columns:1fr}}
+  .month{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px 16px 18px;box-shadow:var(--shadow)}
+  .month h2{display:flex;align-items:baseline;gap:10px;margin:2px 2px 12px;font-size:18px}
+  .month h2 .tag{margin-left:auto;font-size:11px;font-weight:700;padding:3px 9px;border-radius:999px;letter-spacing:.04em}
+  .tag.now{color:var(--accent-dark);background:var(--accent-soft)}
+  .tag.next{color:var(--faint);background:var(--card-2)}
+
+  .dow{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;margin-bottom:5px}
+  .dow span{text-align:center;font-size:11px;font-weight:700;color:var(--faint);padding:2px 0}
+  .dow span.sun{color:#bd6a5a}.dow span.sat{color:#5a7fb0}
+  .grid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}
+  .cell{min-height:84px;background:var(--card-2);border:1px solid var(--line);border-radius:8px;padding:4px 4px 5px;display:flex;flex-direction:column;gap:3px}
+  .cell.empty{background:transparent;border:none}
+  .cell.weekend{background:transparent;border:1px dashed var(--line)}
+  .cell .dnum{font-size:12px;font-weight:700;color:var(--muted);font-variant-numeric:tabular-nums;padding:1px 3px}
+  .cell.sun .dnum{color:#bd6a5a}.cell.sat .dnum{color:#5a7fb0}
+  .cell.today{border-color:var(--accent);box-shadow:0 0 0 1.5px var(--accent)}
+  .cell.today .dnum::after{content:"今日";font-size:9px;margin-left:5px;color:var(--accent-dark);font-weight:800}
+
+  .post{border-radius:6px;padding:4px 6px 5px;font-size:11px;line-height:1.3;font-weight:600;border-left:3px solid}
+  .post .no{font-size:9px;font-weight:800;opacity:.7}
+  .post .th{display:block}
+  .post a.mat{display:inline-block;margin-top:2px;font-size:10px;font-weight:700;text-decoration:none;color:inherit;opacity:.85;border-bottom:1px dotted currentColor}
+  .post .book{display:flex;align-items:center;gap:4px;margin-top:3px;font-size:10px;font-weight:700;cursor:pointer;user-select:none}
+  .post .book input{margin:0;width:14px;height:14px;accent-color:var(--s-booked-bar)}
+  .p-plan{background:var(--s-plan-bg);color:var(--s-plan-ink);border-color:var(--s-plan-bar)}
+  .p-booked{background:var(--s-booked-bg);color:var(--s-booked-ink);border-color:var(--s-booked-bar)}
+  .p-done{background:var(--s-done-bg);color:var(--s-done-ink);border-color:var(--s-done-bar)}
+
+  .horizon{margin:20px 0 0;display:flex;gap:12px;align-items:flex-start;background:var(--card);border:1px dashed var(--line-strong);border-radius:12px;padding:13px 15px;font-size:13px;color:var(--muted)}
+  .horizon b{color:var(--ink)}
+  .horizon .ic{flex:none;width:26px;height:26px;border-radius:8px;background:var(--accent-soft);color:var(--accent-dark);display:grid;place-items:center;font-weight:900}
+  .foot{text-align:center;margin-top:26px;color:var(--faint);font-size:12px;line-height:1.7}
+</style>
+</head>
+<body>
+<main class="container">
+  <a class="backlink" href="index.html">← Weekly Task Board にもどる</a>
+  <header class="head">
+    <h1>🗓️ カルーセル予約カレンダー</h1>
+    <p class="sub">確定カルーセルを平日・朝6時・週5本で自動配置。今月と翌月がいつでも見られ、予約の進み具合と素材リンクがひと目でわかります。チェックしても消えません。</p>
+  </header>
+
+  <div class="controls">
+    <div class="field">
+      <label>基準日</label>
+      <input id="anchorDate" type="date" value="2026-09-03">
+      <span class="hint">実際に配信した平日。</span>
+    </div>
+    <div class="field">
+      <label>その日のテーマ番号</label>
+      <input id="anchorNo" type="number" min="1" max="99" value="7" style="width:90px">
+      <span class="hint">基準日に配信したカルーセルのNo.</span>
+    </div>
+    <div class="cyclebadge" id="cycleInfo">—</div>
+  </div>
+
+  <div class="legend">
+    <span class="lbl">ステータス</span>
+    <span class="chip-key"><span class="swatch sw-done"></span>投稿済み（過去）</span>
+    <span class="chip-key"><span class="swatch sw-booked"></span>予約済み（✓した）</span>
+    <span class="chip-key"><span class="swatch sw-plan"></span>これから予約</span>
+  </div>
+
+  <div class="months" id="months"></div>
+
+  <div class="horizon">
+    <span class="ic">!</span>
+    <div><b>予約可能ライン</b>：インスタは約1ヶ月先までしか予約できません。予約できたマスは <b>「予約済み」に✓</b> を入れると青くなり、どこまで進んだかが残ります。素材は各マスの「📁素材」から開けます。</div>
+  </div>
+
+  <footer class="foot">
+    データ元：カルーセル マスター一覧（確定分）。<br>
+    運用位置がずれたら「基準日」と「テーマ番号」を直近の配信実績に合わせてください。
+  </footer>
+</main>
+
+<script>
+  const F="https://drive.google.com/drive/folders/";
+  const CAROUSELS=[
+    [1,"子どもがオーガニックを食べるべき理由","1Bccj3zwmqMGlAEDnpgnaOqtC5nTIDfTg"],
+    [2,"新時代 オーガニック3.0","1YCiYSpJdR4rWHx2qsa4pKKBcD4_bmIiK"],
+    [4,"有機認証PGS","1n2Rf-_Uo1Fw3E_creLskHgNVkvH1Bn14"],
+    [5,"オーガニックコスメ","15r08DXdzry8wIZN3Uh9v6997LtwiQ0eQ"],
+    [6,"オーガニックライフ","1vypXbG7uSMAYZLQctcFgr3K0TuxffE8R"],
+    [7,"世界最高峰オーガニック","1olyp-aGM_3cyNT03JlEzE0GU_YW1fQsF"],
+    [8,"オーガニックホテル","10-NeyyGW2pMrCLdkZV8_MrMhf7_IU7zF"],
+    [9,"オーガニックコットン","1xC-JYPlH7awgP9r4wftwrJZDbGBO8O2D"],
+    [10,"オーガニックは見た目でわかる？","18uMdj4_vRjYJAkKn7ScCFwMRK_EUHDHS"],
+    [11,"買い物でのオーガニックの割合","1RTS1d8EBt1oxo7rdHudgO8yye0cXrtZc"],
+    [12,"オーガニックでSDGs達成","1RebXEH2hdq-0EJiX-ysD3yMiLQjRtdC9"],
+    [13,"有機卵","1oPy16gU-2ZUwPgSimPb3Gxr8BrtJNyb-"],
+    [14,"肉消費の影響","1SmtZkoEJA-ZUx5TdGHoSLAdYLkFUAeI4"],
+    [15,"オーガニック農地は世界の1.6%","1_mVEJV228ZdoWNtHQWL4K4liN6MpXIcf"],
+    [16,"格安ファッションと遺伝子組換えコットン","1cUQ6c-KlQIcLoqzfcpC_xW7Jc2t4-27z"],
+    [17,"有機・オーガニック・ビオの違い","1WnmPO3eGPdNrV8K5tnX8h5r2TT-4E0nC"],
+    [18,"オーガニックvs石油系コスメ","1q1BGAT4hgT2b8VOJ1nQ97t7fR8mCQytH"],
+    [19,"地球温暖化を緩和","1qh0ufBGOzt9Ahz_iXY3bl9MHToPcnlbj"],
+    [20,"オーガニックは適正価格","1N_JuSlVBq90g9Ex_zMLKX6d4Q9XmImZj"],
+    [21,"植物性ミルク","1Ks7HVeo6cj000m8ZczZG8A1Ec8p37R4s"],
+    [22,"オーガニックコスメと肌老化","1Fv_2A_vmOJIDOl5DZd3T4r6zz5dh6yCe"],
+    [23,"オーガニックの力","1TjVdEGhtxoJ2_7LZ5TjXCzj3YD1RudEC"],
+    [24,"世界で一番怖いものは「無知」","1L4B_jeynKE2MzQbeNGoGIWiOWBVVVq-M"],
+    [25,"オーガニック食材と電子レンジ","1sJSJaQ7xDCKqh7rkJtwBmTDTKtK3TrJm"],
+    [26,"有機卵と平飼い卵","1X5KAcV6fcOtSpoGVKSNW2_4s1C8ol6o6"],
+    [27,"オーガニックを生んだ偉人","1wxBaN2Syyvji4o8iVjfw1CC1WJ9Oe3RE"],
+    [28,"残留農薬ランキング","1xJpwBGsuCs8gx3d-Vbxy7DEZ5pD4Xk3N"],
+    [29,"野草","151rKS_tll2k3loXGUqa2pPWTOgozfcgK"],
+    [30,"病院がオーガニックを導入","1cgGSYv6p5bd4uaOhA02rPayyPWM8fRLm"],
+    [33,"ファッションがもたらす地球への影響","1309Hy5ClO1okLV1UbPaOfdHKuHY4yqQL"],
+    [34,"オーガニック給食","1aeratp16Wd7pZx6knXYgrdyDjXz0eAk2"],
+    [35,"オーガニックが整腸に欠かせない訳","11fpIFquTa3XXmQmUG_Q1t8DEfzEYH_1p"],
+    [36,"有機食材がないときどうする","1jumLyYsNiaBs8IM45ZijNipIH8YNrJq1"],
+    [37,"グリホサート","1TjqIYqB5Q7mt-lWlm7IDoWy3iBMMr3_x"],
+    [38,"残留農薬のデトックスに有機食品","1WWkiJKVwK_8d1rgfAlXUSLsczkp19hGa"],
+    [39,"オーガニックだけで世界人口90億人を養える","1cPyvkWT8W-dzNzG52snVmUIIaISfxcDl"],
+    [40,"ドイツと日本の消費者意識の違い","1Br0h0owmxsQSHQavW1RstuIz8yNf3MHP"],
+    [41,"ドイツのオーガニック政策","1maZ6MUObgVCWoG6cNJdo6tMvUJkgyqWk"],
+    [42,"グリホサートとがん","1PnwAkOwNXuyB21ATu7accx9ecHyYCyFd"],
+    [43,"近代畜産とは","1lliX9p71GDBB0GYrjlgXXk8LJhpz9bct"],
+    [44,"ウイルスを強毒化する近代畜産","1dY2DfXZDJgcym5Npi5Taj_Kj2leqLlgd"],
+    [45,"海洋プラスチック問題","17_ZrDsKayVmYXchL2rclDFMdYF9KY_95"],
+    [46,"水にもオーガニックが存在する","1sJdylB0dOqgaVLI3cxrsHAeTOeQWiBR-"],
+    [47,"生命の源を守るオーガニック","1Mq90Yv4ladq-RA8sG_ePHs3AF7JGBL2T"],
+    [48,"引用：有機生産者は税金が注がれるべき対象","1Vn3bwLHCwSYHzd00k8dc96Dv4fqNymSb"],
+    [49,"引用：真の社会貢献","1FCM1FpXI8VxyCpskuJ2YOY5QIput7ZBv"],
+    [50,"引用：セルフケア＝自己中","1JHlU85a6vZNSC5BHT7GMkbint5Zo_R_p"],
+    [51,"オーガニックは高くない","1Y2AllYpi7rXCE5VaXsC36qIiapcQKFnB"],
+    [52,"オーガニックが予防する病気","1AtjQTJZYEPxLOr_sZKcRmy_n4S_DXgS4"],
+    [53,"オーガニックライフ（2）","1nXiI_-6g4jdJG894J3GSo2sF5xLpEoc5"],
+    [54,"オーガニック 国内産？外国産？","1OpUKlgby9fdgslCmj25YeKXDcAkImroZ"],
+    [55,"オーガニック製品の見分け方","1587191McjP7Sz7y2PquM_vhAlDuS8L1U"],
+    [56,"映画で学ぶオーガニック","1aCEif_VLH4IfgvHri3V0j1KKlWRSdSaW"],
+    [58,"オーガニックとは","1igQwNyr_v3eLwhW0M8LcDziQl5A7l1xV"],
+    [59,"長生きしたいならこれ","1L00R9ga2JbvnMbzAOVMntHkvj2zjCmim"],
+    [60,"オーガニックの良さを伝えようとすると","1mgcoTeioGU1CV7rF9DapquNuJPgFMTkk"],
+    [61,"オーガニック家庭菜園","1V_LFhH1GxST1Sq-TZyZCDHAcj2dFcUax"],
+    [62,"オーガニックコスメのメリット","1qwB-SgaH1hzVOx5uf68qjITRYG6VO8Ze"],
+    [63,"オーガニックライフ 今から始めても遅い？","1thtlcZndDvJrIk-qdkX6_rwevazlWs7B"],
+    [64,"ぼかしコンポスト","1disDFX8kgyDpBobT6AyCXkdSYexOHkjZ"],
+    [65,"安い商品は高額","1jouz00oFsG2KSvcnLQJXgv_GUrIOzMjV"],
+    [66,"瞑想","1ymkYc73xSQyD3yDr4aONLPAgZk1V5A8s"],
+    [67,"オーガニックがいいのに","1NIfXcVF32ubOKNUCbbaNI2pXA2-SL4q7"],
+    [68,"オーガニックコスメだと思って使っていたら","1WF27tQarGSo5DGPhEa11tJI4FLJXAwsr"],
+    [69,"オーガニックで生物多様性の保全","1siMO6As6WWkmdbLVxcjJLJaA71X5CeTM"],
+    [70,"家族から理解を得るには","1zsfApKZ8N9e77nj6y9DBbFkpFl6MvcTo"],
+    [71,"有機食品の7割は認証未取得","1-iI3Sy5zBRH3_I6daVYk-SytGSAUpDLE"],
+    [72,"塩のマイクロプラスチック汚染","1j_N1_f3_XGHD9XiVCurrlB0vckUp7Xty"],
+    [73,"仕事の成果","1kouZ-ei8RqRgL5s8IfvguzJ6HdruylnC"],
+    [74,"専門家おすすめ","104636ozOQTRDMY-lVLjNL5T7m3Jgh8j4"],
+  ];
+
+  const $=id=>document.getElementById(id);
+  function pad(n){return String(n).padStart(2,"0")}
+  function ymd(d){return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`}
+  function dateOnly(d){return new Date(d.getFullYear(),d.getMonth(),d.getDate())}
+
+  const NOW=dateOnly(new Date());
+  const TODAY_STR=ymd(NOW);
+  const CUR=new Date(NOW.getFullYear(),NOW.getMonth(),1);
+  const NEXT=new Date(NOW.getFullYear(),NOW.getMonth()+1,1);
+
+  let booked={};
+  try{booked=JSON.parse(localStorage.getItem("iic_booked")||"{}")}catch(e){booked={}}
+  function saveBooked(){try{localStorage.setItem("iic_booked",JSON.stringify(booked))}catch(e){}}
+
+  // 平日数の符号つき差（anchor=0）
+  function weekdaysBetween(a,b){
+    if(ymd(a)===ymd(b))return 0;
+    const step=a<=b?1:-1; let n=0; const cur=new Date(a);
+    while(ymd(cur)!==ymd(b)){
+      cur.setDate(cur.getDate()+step);
+      const wd=cur.getDay();
+      if(wd!==0&&wd!==6)n+=step;
+    }
+    return n;
+  }
+  function buildSchedule(){
+    const anchor=new Date($("anchorDate").value+"T00:00:00");
+    const anchorNo=parseInt($("anchorNo").value,10);
+    let idx=CAROUSELS.findIndex(c=>c[0]===anchorNo); if(idx<0)idx=0;
+    const N=CAROUSELS.length, map={};
+    for(let off=-95;off<=95;off++){
+      const d=new Date(anchor); d.setDate(d.getDate()+off);
+      const wd=d.getDay(); if(wd===0||wd===6)continue;
+      const ci=((idx+weekdaysBetween(anchor,d))%N+N)%N;
+      map[ymd(d)]=CAROUSELS[ci];
+    }
+    return map;
+  }
+  function statusFor(key){
+    const d=new Date(key+"T00:00:00");
+    if(d<NOW)return "done";
+    if(booked[key])return "booked";
+    return "plan";
+  }
+  function renderMonth(base,map,tagCls,tagTxt){
+    const y=base.getFullYear(),m=base.getMonth();
+    const first=new Date(y,m,1),startDow=first.getDay(),days=new Date(y,m+1,0).getDate();
+    let cells="";
+    for(let i=0;i<startDow;i++)cells+='<div class="cell empty"></div>';
+    for(let dnum=1;dnum<=days;dnum++){
+      const d=new Date(y,m,dnum),key=ymd(d),wd=d.getDay(),weekend=(wd===0||wd===6);
+      const cl=["cell",weekend?"weekend":"",wd===0?"sun":"",wd===6?"sat":"",key===TODAY_STR?"today":""].filter(Boolean).join(" ");
+      let inner=""; const car=map[key];
+      if(car&&!weekend){
+        const st=statusFor(key), cls={done:"p-done",booked:"p-booked",plan:"p-plan"}[st];
+        const checked=booked[key]?"checked":"";
+        inner=`<div class="post ${cls}"><span class="no">No.${car[0]}</span><span class="th">${car[1]}</span><a class="mat" href="${F}${car[2]}" target="_blank" rel="noopener">📁素材</a><label class="book"><input type="checkbox" data-key="${key}" ${checked}>予約済み</label></div>`;
+      }
+      cells+=`<div class="${cl}"><span class="dnum">${dnum}</span>${inner}</div>`;
+    }
+    return `<section class="month"><h2>${y}年${m+1}月<span class="tag ${tagCls}">${tagTxt}</span></h2>
+      <div class="dow"><span class="sun">日</span><span>月</span><span>火</span><span>水</span><span>木</span><span>金</span><span class="sat">土</span></div>
+      <div class="grid">${cells}</div></section>`;
+  }
+  function render(){
+    const map=buildSchedule();
+    $("months").innerHTML=renderMonth(CUR,map,"now","今月")+renderMonth(NEXT,map,"next","翌月");
+    const limit=new Date(NOW); limit.setDate(limit.getDate()+29);
+    $("cycleInfo").innerHTML=`予約できるのは <b>${limit.getMonth()+1}/${limit.getDate()}頃まで</b>`;
+    document.querySelectorAll('.book input').forEach(cb=>{
+      cb.addEventListener('change',e=>{
+        const k=e.target.dataset.key;
+        if(e.target.checked)booked[k]=true; else delete booked[k];
+        saveBooked(); render();
+      });
+    });
+  }
+  $("anchorDate").addEventListener('change',render);
+  $("anchorNo").addEventListener('input',render);
+  render();
+</script>
+</body>
+</html>

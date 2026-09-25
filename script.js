@@ -69,6 +69,8 @@
   // ===== localStorage（フォールバック/キャッシュ） =====
   const weekOverride = getParam('week');
   const currentWeek = weekOverride || getISOWeek(new Date());
+  // 週識別子がこのタグの行は、毎週表示し続け「完了」ボタンを押すまで消えない（週替わりで消えない繰り越しタスク）
+  const PERSIST_TAG = "常時";
 
   function getWeekRange(date) {
     const d = new Date(date);
@@ -92,11 +94,11 @@
   // ===== 共有バックエンド（GAS） =====
   const useShared = !!cfg.progressApiUrl;
 
-  async function fetchSharedChecks() {
+  async function fetchSharedChecks(weekName) {
     if (!useShared) return null;
     try {
       const url = cfg.progressApiUrl + (cfg.progressApiUrl.includes('?') ? '&' : '?')
-        + 'week=' + encodeURIComponent(currentWeek) + '&t=' + Date.now();
+        + 'week=' + encodeURIComponent(weekName) + '&t=' + Date.now();
       const res = await fetch(url, { method: 'GET' });
       if (!res.ok) return null;
       const json = await res.json();
@@ -107,10 +109,10 @@
     }
   }
 
-  function postSharedCheck(num, batch, done) {
+  function postSharedCheck(week, num, batch, done) {
     if (!useShared) return;
     const body = JSON.stringify({
-      week: currentWeek, num: String(num), batch: String(batch),
+      week: String(week), num: String(num), batch: String(batch),
       done: !!done, who: WHO
     });
     // text/plain で送ることでpreflight回避（GAS制約）
@@ -198,7 +200,7 @@
     }
     const disabled = ROLE === 'viewer' ? 'disabled' : '';
     return `
-      <div class="card ${checked ? "done" : ""}" data-key="${escapeAttr(key)}" data-num="${escapeAttr(p["投稿番号"])}" data-batch="${escapeAttr(p["バッチ"])}">
+      <div class="card ${checked ? "done" : ""}" data-key="${escapeAttr(key)}" data-num="${escapeAttr(p["投稿番号"])}" data-batch="${escapeAttr(p["バッチ"])}" data-week="${escapeAttr(p["週識別子"])}">
         <div class="card-top">
           <input type="checkbox" ${checked ? "checked" : ""} ${disabled} aria-label="完了">
           <span class="num">#${escapeHTML(p["投稿番号"])}</span>
@@ -219,7 +221,7 @@
   let THIS_WEEK_POSTS = [];
   let THIS_WEEK_PENDING = { tue: [], fri: [], carousel: [] };
   function render(posts) {
-    const thisWeek = posts.filter(p => p["週識別子"] === currentWeek);
+    const thisWeek = posts.filter(p => p["週識別子"] === currentWeek || p["週識別子"] === PERSIST_TAG);
     THIS_WEEK_POSTS = thisWeek;
     // 完了済みはボードから消す（記録はGoogle Sheets側の進捗シートに残る）
     const pending = thisWeek.filter(p => !getCheckMeta(p["投稿番号"] + "-" + p["バッチ"]));
@@ -270,7 +272,7 @@
         const batch = card.dataset.batch;
         const done = cb.checked;
         // 共有書き込み
-        postSharedCheck(num, batch, done);
+        postSharedCheck(card.dataset.week || currentWeek, num, batch, done);
         // ローカルキャッシュ
         const local = loadLocalChecks();
         if (done) local[key] = true; else delete local[key];
@@ -344,9 +346,12 @@
 
   async function init() {
     // 1. 共有バックエンドから取得（失敗時はlocalStorageへフォールバック）
-    const shared = await fetchSharedChecks();
-    if (shared) {
-      CHECKS = shared;
+    const [shared, persistShared] = await Promise.all([
+      fetchSharedChecks(currentWeek),
+      fetchSharedChecks(PERSIST_TAG)
+    ]);
+    if (shared || persistShared) {
+      CHECKS = Object.assign({}, shared || {}, persistShared || {});
     } else {
       const local = loadLocalChecks();
       Object.keys(local).forEach(k => CHECKS[k] = { done: true });
